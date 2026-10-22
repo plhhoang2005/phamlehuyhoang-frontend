@@ -1,0 +1,76 @@
+================================================================================
+BÁO CÁO CÁC CHỨC NĂNG ĐÃ LÀM ĐƯỢC - MÔN LẬP TRÌNH THIẾT BỊ DI ĐỘNG
+Đề tài: Hệ thống Điểm danh Sinh viên Toàn diện (Ứng dụng Di động & Web API)
+================================================================================
+
+1. THÔNG TIN SINH VIÊN
+- Họ và tên: Phạm Lê Huy Hoàng
+- Tên project / Repository: phamlehuyhoang
+- Link GitHub Backend:  https://github.com/plhhoang2005/phamlehuyhoang-backend
+- Link GitHub Frontend: https://github.com/plhhoang2005/phamlehuyhoang-frontend
+- Link Video Demo (YouTube): [Dán link youtube video demo của bạn vào đây]
+- Link API / Swagger:        [Dán link API Swagger hoặc Cloudflare Quick Tunnel vào đây]
+
+--------------------------------------------------------------------------------
+2. CÁC TÀI KHOẢN KIỂM THỬ HỆ THỐNG
+- Quản trị viên (Admin): admin@hutech.edu.vn   / Mật khẩu: Admin@123456
+- Giảng viên (Teacher):  teacher@hutech.edu.vn / Mật khẩu: Teacher@123456
+- Sinh viên (Student):   student@hutech.edu.vn / Mật khẩu: Student@123456
+
+--------------------------------------------------------------------------------
+3. TỔNG HỢP CÁC CHỨC NĂNG ĐÃ HOÀN THÀNH
+
+A. CHỨC NĂNG CƠ BẢN VÀ NGHIỆP VỤ HỆ THỐNG (3 PHÂN QUYỀN):
+[X] 1. Quản lý Đăng nhập & Xác thực:
+    - Đăng nhập bằng Email và Mật khẩu băm an toàn PBKDF2.
+    - Cấp mã JWT Token có phân quyền (Role) và kiểm soát phiên hoạt động.
+    - Xác thực bảo mật 2 lớp qua mã OTP gửi về Email.
+[X] 2. Phân quyền Quản trị viên (Admin):
+    - Quản lý danh sách người dùng (Thêm, xem, cập nhật tài khoản Admin, Giảng viên, Sinh viên).
+    - Quản lý danh mục Môn học và Lớp học phần.
+    - Phân công Giảng viên giảng dạy và gán danh sách Sinh viên vào lớp.
+[X] 3. Phân quyền Giảng viên (Teacher):
+    - Xem danh sách lớp học và các buổi học được phân công.
+    - Thiết lập thông số buổi học: Tọa độ GPS phòng học và bán kính cho phép.
+    - Mở / Đóng phiên điểm danh trực tiếp trong buổi học.
+    - Hiển thị mã QR động tự động làm mới hoặc bấm nút tạo mới.
+    - Xem danh sách sinh viên đã điểm danh thời gian thực.
+    - Chốt kết quả điểm danh buổi học, cập nhật điểm danh thủ công khi sinh viên có phép.
+[X] 4. Phân quyền Sinh viên (Student):
+    - Xem danh sách các lớp học đang tham gia và thông tin giảng viên.
+    - Quét mã QR để điểm danh lớp học bằng Camera.
+    - Xem lịch sử điểm danh chi tiết từng buổi học (Có mặt, Đi trễ, Vắng).
+    - Xem tiến độ chuyên cần và dự báo số buổi vắng.
+
+B. BA (3) CHỨC NĂNG MỞ RỘNG ĐÃ CHỌN VÀ HOÀN THÀNH:
+[X] 1. Đăng nhập bằng nhận diện khuôn mặt (Face Recognition):
+    - Thu nhận ảnh chân dung qua Camera thiết bị di động hoặc chọn từ thư viện.
+    - Tích hợp mô hình AI YuNet phát hiện khuôn mặt và mô hình SFace trích xuất vector 128 chiều chuẩn hóa L2.
+    - Máy chủ backend so khớp vector khuôn mặt bằng khoảng cách Cosine Similarity (ngưỡng 0.363).
+    - Kết hợp xác thực mã xác nhận OTP 2 lớp trước khi cấp phiên đăng nhập.
+    - Hỗ trợ cơ chế dự phòng đăng nhập bằng mật khẩu khi thiết bị không hỗ trợ camera.
+
+[X] 2. Vị trí khi điểm danh (GPS Geolocation):
+    - Giảng viên cấu hình tọa độ GPS phòng học (Kinh độ, Vĩ độ) và bán kính cho phép (mặc định 100 mét).
+    - Thiết bị di động của sinh viên lấy tọa độ GPS thực tế và sai số định vị (Accuracy).
+    - Máy chủ Web API độc lập tính toán khoảng cách mặt cầu lượng giác theo công thức Haversine.
+    - Hệ thống tự động từ chối điểm danh nếu sai số GPS > 50m hoặc khoảng cách vượt quá bán kính phòng học.
+
+[X] 3. Mã QR theo buổi học (Dynamic QR Attendance):
+    - Giảng viên mở phiên điểm danh cho buổi học của lớp được phân công.
+    - Hệ thống sinh mã QR ngẫu nhiên với thời hạn hiệu lực 60 giây; giảng viên có thể làm mới mã bất kỳ lúc nào.
+    - Đóng phiên điểm danh sẽ lập tức vô hiệu hóa mã QR, ngăn chặn điểm danh muộn.
+    - Ràng buộc cơ sở dữ liệu UNIQUE (ClassSessionId, StudentId) chống triệt để việc điểm danh trùng lặp.
+
+C. TÍNH NĂNG MỚI ĐỀ XUẤT: THEO DÕI SỐ BUỔI VẮNG & DỰ BÁO CHUYÊN CẦN
+[X] - Tính toán chính xác theo công thức quy chế đào tạo:
+      * N: Tổng số buổi học chính thức của lớp.
+      * M: Số buổi học đã chốt kết quả điểm danh.
+      * A: Số buổi sinh viên bị tính vắng không phép.
+      * L: Số buổi được phép vắng tối đa.
+      * Tỷ lệ chuyên cần hiện tại: (M - A) / M * 100%.
+      * Tỷ lệ chuyên cần nếu vắng buổi tiếp theo: (M - A) / (M + 1) * 100%.
+      * Số buổi còn có thể vắng: min(N - M, max(0, L - A)).
+    - Trực quan hóa tiến độ bằng thanh phần trăm màu sắc (Xanh: An toàn, Vàng: Cảnh báo, Đỏ: Nguy cơ cấm thi).
+    - Đưa ra lời khuyên cụ thể cho sinh viên để đảm bảo điều kiện thi kết thúc học phần.
+================================================================================
